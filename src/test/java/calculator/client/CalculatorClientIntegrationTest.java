@@ -10,8 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Lists.list;
 
 class CalculatorClientIntegrationTest {
 
@@ -49,6 +51,20 @@ class CalculatorClientIntegrationTest {
     @Test
     void shouldSumMinusThreeAndSevenAndReturnFour() {
         assertThat(client.sum(-3, 7)).isEqualTo(4);
+    }
+
+    @Test
+    void shouldCalculatePrimesForTwoHundredAndTen() {
+        List<Integer> result = client.calculatePrimes(210);
+
+        assertThat(result).containsExactlyElementsOf(list(2, 3, 5, 7));
+    }
+
+    @Test
+    void shouldCalculatePrimesForHundredAndTen() {
+        List<Integer> result = client.calculatePrimes(120);
+
+        assertThat(result).containsExactlyElementsOf(list(2, 2, 2, 3, 5));
     }
 
 }
