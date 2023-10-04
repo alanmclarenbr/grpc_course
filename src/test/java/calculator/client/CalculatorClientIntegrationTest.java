@@ -29,7 +29,7 @@ class CalculatorClientIntegrationTest {
         calculatorServer.startServer();
 
         initChannel();
-        client = new CalculatorClient(CalculatorServiceGrpc.newBlockingStub(channel));
+        client = new CalculatorClient(CalculatorServiceGrpc.newBlockingStub(channel), CalculatorServiceGrpc.newStub(channel));
     }
 
     private void initChannel() {
@@ -65,6 +65,16 @@ class CalculatorClientIntegrationTest {
         List<Integer> result = client.calculatePrimes(120);
 
         assertThat(result).containsExactlyElementsOf(list(2, 2, 2, 3, 5));
+    }
+
+    @Test
+    void shouldCalculateAverage() throws InterruptedException {
+        assertThat(client.calculateAvg(list(1, 2, 3, 4))).isEqualTo(2.5d);
+    }
+
+    @Test
+    void shouldCalculateMaxElementEachRound() throws InterruptedException {
+        assertThat(client.calculateMax(list(1, 5, 3, 6, 2, 20))).isEqualTo(list(1, 5, 5, 6, 6, 20));
     }
 
 }

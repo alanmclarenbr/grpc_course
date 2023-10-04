@@ -1,19 +1,18 @@
 package greeting.client;
 
-import calculator.server.CalculatorServer;
 import com.proto.greeting.GreetingServiceGrpc;
 import greeting.server.GreetingServer;
 import grpc.GrpcServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Lists.list;
 
 class GreetingClientIntegrationTest {
 
@@ -29,7 +28,7 @@ class GreetingClientIntegrationTest {
         greetingServer.startServer();
 
         initChannel();
-        client = new GreetingClient(GreetingServiceGrpc.newBlockingStub(channel));
+        client = new GreetingClient(GreetingServiceGrpc.newBlockingStub(channel), GreetingServiceGrpc.newStub(channel));
     }
 
     private void initChannel() {
@@ -51,5 +50,15 @@ class GreetingClientIntegrationTest {
     @Test
     void shouldGreetTenTimes() {
         assertThat(client.doGreetManyTimes("Alan")).containsOnly("Hello Alan").hasSize(10);
+    }
+
+    @Test
+    void shouldLongGreet() throws InterruptedException {
+        assertThat(client.longGreet(list("Alan", "Elis", "Ronaldinho"))).isEqualTo("Hello Alan!\nHello Elis!\nHello Ronaldinho!\n");
+    }
+
+    @Test
+    void shouldGreetEveryone() throws InterruptedException {
+        assertThat(client.greetEveryone(list("Alan", "Elis", "Ronaldinho"))).containsExactlyElementsOf(list("Hello Alan", "Hello Elis", "Hello Ronaldinho"));
     }
 }
