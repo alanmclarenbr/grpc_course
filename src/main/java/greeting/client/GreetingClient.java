@@ -3,13 +3,14 @@ package greeting.client;
 import com.proto.greeting.GreetingRequest;
 import com.proto.greeting.GreetingResponse;
 import com.proto.greeting.GreetingServiceGrpc;
+import io.grpc.Deadline;
 import io.grpc.stub.StreamObserver;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
@@ -92,5 +93,15 @@ public class GreetingClient {
         countDownLatch.await(3, SECONDS);
 
         return greetings;
+    }
+
+    public String greetWithDeadline(String name) {
+        GreetingResponse greetingResponse = greetingServiceBlockingStub
+                .withDeadline(Deadline.after(100, MILLISECONDS))
+                .greetWithDeadline(GreetingRequest.newBuilder()
+                        .setFirstName(name)
+                        .build());
+
+        return greetingResponse.getResult();
     }
 }

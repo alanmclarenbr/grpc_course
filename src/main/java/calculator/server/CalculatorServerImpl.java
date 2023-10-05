@@ -7,11 +7,13 @@ import com.calculator.max.MaxRequest;
 import com.calculator.max.MaxResponse;
 import com.calculator.prime.PrimeRequest;
 import com.calculator.prime.PrimeResponse;
+import com.calculator.sqrt.SqrtRequest;
+import com.calculator.sqrt.SqrtResponse;
 import com.calculator.sum.SumRequest;
 import com.calculator.sum.SumResponse;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -80,6 +82,7 @@ public class CalculatorServerImpl extends CalculatorServiceGrpc.CalculatorServic
     public StreamObserver<MaxRequest> max(StreamObserver<MaxResponse> responseObserver) {
         return new StreamObserver<MaxRequest>() {
             List<Integer> elements = newArrayList();
+
             @Override
             public void onNext(MaxRequest request) {
                 elements.add(request.getNumber());
@@ -99,5 +102,19 @@ public class CalculatorServerImpl extends CalculatorServiceGrpc.CalculatorServic
                 responseObserver.onCompleted();
             }
         };
+    }
+
+    @Override
+    public void sqrt(SqrtRequest request, StreamObserver<SqrtResponse> responseObserver) {
+        if (request.getNumber() < 0) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Cannot calculate sqrt for negative values")
+                    .asRuntimeException());
+        }
+
+        responseObserver.onNext(SqrtResponse.newBuilder()
+                .setResult(Math.sqrt(request.getNumber()))
+                .build());
+        responseObserver.onCompleted();
     }
 }

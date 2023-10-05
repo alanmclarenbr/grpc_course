@@ -5,6 +5,7 @@ import greeting.server.GreetingServer;
 import grpc.GrpcServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.list;
 
 class GreetingClientIntegrationTest {
@@ -60,5 +62,12 @@ class GreetingClientIntegrationTest {
     @Test
     void shouldGreetEveryone() throws InterruptedException {
         assertThat(client.greetEveryone(list("Alan", "Elis", "Ronaldinho"))).containsExactlyElementsOf(list("Hello Alan", "Hello Elis", "Hello Ronaldinho"));
+    }
+
+    @Test
+    void shouldThrowExceptionForExceedingDeadline() {
+        assertThatThrownBy(() -> client.greetWithDeadline("Alan"))
+                .hasMessageContaining("DEADLINE_EXCEEDED: deadline exceeded after")
+                .isExactlyInstanceOf(StatusRuntimeException.class);
     }
 }

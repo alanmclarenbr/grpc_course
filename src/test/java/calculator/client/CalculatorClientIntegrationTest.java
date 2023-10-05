@@ -5,6 +5,7 @@ import com.calculator.CalculatorServiceGrpc;
 import grpc.GrpcServer;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.list;
 
 class CalculatorClientIntegrationTest {
@@ -75,6 +77,18 @@ class CalculatorClientIntegrationTest {
     @Test
     void shouldCalculateMaxElementEachRound() throws InterruptedException {
         assertThat(client.calculateMax(list(1, 5, 3, 6, 2, 20))).isEqualTo(list(1, 5, 5, 6, 6, 20));
+    }
+
+    @Test
+    void shouldCalculateSqrt() {
+        assertThat(client.calculateSqrt(4)).isEqualTo(2d);
+    }
+
+    @Test
+    void ShouldRaiseErrorWhenProvidedNumberIsNegative() {
+        assertThatThrownBy(() -> client.calculateSqrt(-1))
+                .hasMessage("INVALID_ARGUMENT: Cannot calculate sqrt for negative values")
+                .isExactlyInstanceOf(StatusRuntimeException.class);
     }
 
 }

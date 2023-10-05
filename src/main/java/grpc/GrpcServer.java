@@ -10,4 +10,5 @@ public interface GrpcServer {
 
     void stopServer();
 
+    void awaitTermination() throws InterruptedException;
 }

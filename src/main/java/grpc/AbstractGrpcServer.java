@@ -3,6 +3,7 @@ package grpc;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.protobuf.services.ProtoReflectionService;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ public abstract class AbstractGrpcServer implements GrpcServer {
         if (server == null || server.isTerminated()) {
             server = ServerBuilder.forPort(port)
                     .addService(getBindableService())
+                    .addService(ProtoReflectionService.newInstance())
                     .build();
         }
     }
@@ -29,5 +31,10 @@ public abstract class AbstractGrpcServer implements GrpcServer {
     @Override
     public void stopServer() {
         server.shutdown();
+    }
+
+    @Override
+    public void awaitTermination() throws InterruptedException {
+        server.awaitTermination();
     }
 }

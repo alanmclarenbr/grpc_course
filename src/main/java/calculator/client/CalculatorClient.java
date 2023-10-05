@@ -7,9 +7,10 @@ import com.calculator.max.MaxRequest;
 import com.calculator.max.MaxResponse;
 import com.calculator.prime.PrimeRequest;
 import com.calculator.prime.PrimeResponse;
+import com.calculator.sqrt.SqrtRequest;
+import com.calculator.sqrt.SqrtResponse;
 import com.calculator.sum.SumRequest;
 import com.calculator.sum.SumResponse;
-import com.google.common.collect.Lists;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
@@ -108,6 +109,12 @@ public class CalculatorClient {
 
         countDownLatch.await(3, SECONDS);
         return results;
+    }
+
+    public Double calculateSqrt(Integer number) {
+        SqrtResponse response = calculatorServiceBlockingStub.sqrt(SqrtRequest.newBuilder().setNumber(number).build());
+
+        return response.getResult();
     }
 
 }
