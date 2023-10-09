@@ -7,8 +7,6 @@ plugins {
 group 'grpc-course'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }
@@ -41,6 +39,7 @@ dependencies {
     implementation 'io.grpc:grpc-services:1.56.1'
     implementation 'io.grpc:grpc-protobuf:1.58.0'
     implementation 'io.grpc:grpc-stub:1.58.0'
+    implementation 'org.mongodb:mongodb-driver-sync:4.10.2'
     implementation 'org.assertj:assertj-core:3.24.2'
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 }
